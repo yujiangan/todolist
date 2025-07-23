@@ -1,4 +1,126 @@
 <script setup>
+   import {ref,computed,nextTick} from 'vue'
+   // 输入框值
+   const newTodo = ref('')
+   // 任务列表
+   const todos = ref([
+      { id: 1, text: 'Learn Vue 3', completed: true },
+      { id: 2, text: 'Build a Todo App', completed: false },
+      { id: 3, text: 'Deploy to production', completed: false }
+   ])
+   // 筛选项
+   const filter = ref('')
+   // 未完成数量
+   const remaining = computed(()=> {
+      return todos.value.filter(todo => !todo.completed).length
+   })
+   // 已完成数量
+   const completedCount = computed(() => {
+      return todos.value.filter(todo => todo.completed).length
+   })
+   // 根据筛选项过滤任务
+   const filteredTodos = computed(() => {
+      switch (filter.value) {
+         case 'active':
+            return todos.value.filter(todo => !todo.completed)
+         case 'completed':
+            return todos.value.filter(todo => todo.completed)
+         default:
+            return todos.value
+      }
+   })
+   // 添加新任务
+   const addTodo = () => {
+      if(newTodo.value.trim()){
+         todos.value.push({
+            id:+new Date(),
+            text:newTodo.value.trim(),
+            completed:false
+         })
+         newTodo.value = ''
+      }
+   }
+   // 删除任务
+   const removeTodo = (id) => {
+      todos.value = todos.value.filter(todo => todo.id !== id)
+   }
+   // 清除已完成任务
+   const clearCompleted = () => {
+      todos.value = todos.value.filter(todo => !todo.completed)
+   }
+   // 切换单个状态
+   const toggleTodo = (id) => {
+      const todo = todos.value.find(todo => todo.id === id)
+      if (todo) {
+         todo.completed = !todo.completed
+      }
+   }
+   // 切换所有任务状态
+   const toggleAll = () => {
+      const allCompleted = todos.value.every(todo => todo.completed );
+      todos.value.forEach(todo => {
+         todo.completed = !allCompleted
+      })
+   }
+   // 清楚all默认样式
+   const clearDefault =() => {
+      document.querySelector('.default').classList.remove('default')
+   }
+   const handleAllClick = () => {
+      filter.value = 'all'
+      clearDefault()
+    }
+   const handleActiveClick = () => {
+      filter.value = 'active'
+      clearDefault()
+    }
+     
+   const handleCompletedClick = () => {
+      filter.value = 'completed';
+      clearDefault();  
+   }
+    
+   // 编辑状态
+   const editingId = ref(null)
+   const editingText = ref('')
+   // 开始编辑任务
+   const startEditing = (todo) => {
+      editingId.value = todo.id
+      editingText.value = todo.text
+      // 等待DOM更新后自动聚焦
+      nextTick(() => {
+      const input = document.getElementById(`edit-input-${todo.id}`)
+      if (input) {
+         input.focus()
+         // 选中所有文本以便直接替换
+         input.setSelectionRange(0, input.value.length)
+      }
+    })
+   }
+
+   // 完成编辑
+   const finishEditing = (todo) => {
+      if (editingText.value.trim()) {
+         todo.text = editingText.value.trim()
+      }
+      editingId.value = null
+      editingText.value = ''
+   }
+
+   // 取消编辑
+   const cancelEditing = () => {
+      editingId.value = null
+      editingText.value = ''
+   }
+
+   // 保存编辑（按回车键）退出编辑（esc）
+   const saveOnEnter = (e, todo) => {
+      if (e.key === 'Enter') {
+         finishEditing(todo)
+      } else if (e.key === 'Escape') {
+         cancelEditing(todo)
+      }
+  }
 </script>
 
 <template>
@@ -8,37 +130,72 @@
             <a href="#">
                <h1>todos</h1>
             </a>
-            <input type="text" class="new-todo" placeholder="What needs to be done?">
+            <input 
+            type="text" 
+            class="new-todo" 
+            placeholder="What needs to be done?"
+            v-model="newTodo"
+            @keydown.enter="addTodo"
+            >
          </header>
          <main class="main">
-            <input class="toggle-all-container" id="toggle-all-input"> 
+            <input class="toggle-all-container" id="toggle-all-input" @click="toggleAll"> 
             <label for="toggle-all-input" class="toggle-all-label">
                <div>❯</div>
             </label>
             <ul class="todolist" >
-               <li>
-                  <div class="view">
-                     <input type="checkbox" id="todo-check">
-                     <label for="todo-check">你好</label>
-                     <button>
+               <li 
+                  v-for="todo in filteredTodos"
+                  :key="todo.id">
+                  <div class="view"  v-show="editingId !== todo.id">
+                     <input 
+                     type="checkbox" 
+                     id="todo-check"
+                     :checked="todo.completed"
+                     
+                     @click="toggleTodo(todo.id)"
+                     >
+                     <label for="todo-check" @dblclick="startEditing(todo)">{{ todo.text }}</label>
+                     <button @click="removeTodo(todo.id)">
                         <van-icon name="cross" size="18" />
                      </button>
                   </div>
-                  <!-- <div class="input-container">
-                     <input id="edit-todo-input" type="text" class="edit">
-                  </div> -->
+                  <div 
+                  class="input-container" 
+                  v-show="editingId === todo.id"
+                  >
+                     <input :id="`edit-input-${todo.id}`" type="text" class="edit" v-model="editingText"
+                      @keydown="saveOnEnter($event, todo)" @blur="finishEditing(todo)">
+                  </div>
                </li>
             </ul>
             
          </main>
          <footer class="footer">
-            <div class="items-count">3 item left </div>
+            <div class="items-count">{{ remaining }} item{{ remaining !== 1 ? 's' : '' }} left</div>
             <div class="filters">
-              <button class="filter-btn default">All</button>
-              <button class="filter-btn">Active</button>
-              <button class="filter-btn">Completed</button>
+              <button 
+               class="filter-btn default" 
+               @click="handleAllClick"
+               :class="{active: filter === 'all'}"
+               >All</button>
+              <button 
+               class="filter-btn" 
+               @click="handleActiveClick"
+               :class="{active: filter === 'active'}" 
+               >Active</button>
+              <button 
+               class="filter-btn" 
+               @click="handleCompletedClick "
+               :class="{active: filter === 'completed'}" 
+               > 
+               Completed</button>
             </div>
-            <button class="clear-btn"  >Clean Completed</button>
+            <button 
+               class="clear-btn"
+               v-show="completedCount > 0"
+               @click="clearCompleted"
+              >Clean Completed</button>
          </footer>
          <div class="first-dev"></div>
          <div class="second-dev"></div>
@@ -61,8 +218,10 @@
    min-height: 130px;
    line-height: 1.4rem;
    margin:0 auto;
-   // background-color: pink;
    font-weight: 300;
+   display: flex;
+   flex-direction: column;
+   min-height: 85vh;
    
    .todoapp{
       width: 454px;
@@ -209,11 +368,12 @@
                }
                
                .input-container {
-                  width: 100%;
+                  width:  100%;
                   height: 100%;
                   border: none;
                   box-sizing: border-box;
                   .edit {
+                     width: 100%;
                      height: 100%;
                      width: calc(100% - 45px); /* 减去左边距 */
                      margin-left: 45px;
@@ -289,7 +449,7 @@
      
    }
     .info {
-      margin: 165px auto 0;
+      margin: 365px auto 0;
       color: #4d4d4d;
       font-size: 11px;
       text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
