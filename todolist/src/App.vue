@@ -9,7 +9,7 @@
       { id: 3, text: 'Deploy to production', completed: false }
    ])
    // 筛选项
-   const filter = ref('')
+   const filter = ref('all')
    // 未完成数量
    const remaining = computed(()=> {
       return todos.value.filter(todo => !todo.completed).length
@@ -50,35 +50,20 @@
    }
    // 切换单个状态
    const toggleTodo = (id) => {
-      const todo = todos.value.find(todo => todo.id === id)
-      if (todo) {
-         todo.completed = !todo.completed
-      }
+      todos.value = todos.value.map(todo =>
+         todo.id === id ? {...todo, completed : !todo.completed}  : todo
+      )
    }
+
    // 切换所有任务状态
    const toggleAll = () => {
       const allCompleted = todos.value.every(todo => todo.completed );
-      todos.value.forEach(todo => {
-         todo.completed = !allCompleted
-      })
+      todos.value = todos.value.map(todo => ({
+         ...todo,
+         completed: !allCompleted
+      }))
    }
-   // 清楚all默认样式
-   const clearDefault =() => {
-      document.querySelector('.default').classList.remove('default')
-   }
-   const handleAllClick = () => {
-      filter.value = 'all'
-      clearDefault()
-    }
-   const handleActiveClick = () => {
-      filter.value = 'active'
-      clearDefault()
-    }
-     
-   const handleCompletedClick = () => {
-      filter.value = 'completed';
-      clearDefault();  
-   }
+    
     
    // 编辑状态
    const editingId = ref(null)
@@ -100,8 +85,16 @@
 
    // 完成编辑
    const finishEditing = (todo) => {
-      if (editingText.value.trim()) {
-         todo.text = editingText.value.trim()
+      // 避免blur重复执行函数
+      if (editingId.value === null) return;
+      const trimmedText  = editingText.value.trim()
+      if (!trimmedText || trimmedText === todo.text){
+         todos.value = todos.value.filter(t => t.id !== todo.id)
+      } 
+      else {
+         todos.value = todos.value.map(t => 
+            t.id === todo.id ? {...t,text:trimmedText} :t
+         )
       }
       editingId.value = null
       editingText.value = ''
@@ -120,7 +113,7 @@
       } else if (e.key === 'Escape') {
          cancelEditing(todo)
       }
-  }
+   }
 </script>
 
 <template>
@@ -139,8 +132,8 @@
             >
          </header>
          <main class="main">
-            <input class="toggle-all-container" id="toggle-all-input" @click="toggleAll"> 
-            <label for="toggle-all-input" class="toggle-all-label">
+            <input class="toggle-all-container" id="toggle-all-input" @click="toggleAll" v-show="todos.length > 0" > 
+            <label for="toggle-all-input" class="toggle-all-label" v-show="todos.length > 0" >
                <div>❯</div>
             </label>
             <ul class="todolist" >
@@ -150,12 +143,11 @@
                   <div class="view"  v-show="editingId !== todo.id">
                      <input 
                      type="checkbox" 
-                     id="todo-check"
                      :checked="todo.completed"
                      
                      @click="toggleTodo(todo.id)"
                      >
-                     <label for="todo-check" @dblclick="startEditing(todo)">{{ todo.text }}</label>
+                     <label   @dblclick="startEditing(todo)">{{ todo.text }}</label>
                      <button @click="removeTodo(todo.id)">
                         <van-icon name="cross" size="18" />
                      </button>
@@ -171,22 +163,22 @@
             </ul>
             
          </main>
-         <footer class="footer">
+         <footer class="footer" v-show="todos.length > 0" >
             <div class="items-count">{{ remaining }} item{{ remaining !== 1 ? 's' : '' }} left</div>
             <div class="filters">
               <button 
-               class="filter-btn default" 
-               @click="handleAllClick"
-               :class="{active: filter === 'all'}"
+               class="filter-btn " 
+               @click="filter ='all'"
+               :class="{active: filter === 'all',default:filter === 'all'}"
                >All</button>
               <button 
                class="filter-btn" 
-               @click="handleActiveClick"
+               @click="filter = 'active'"
                :class="{active: filter === 'active'}" 
                >Active</button>
               <button 
                class="filter-btn" 
-               @click="handleCompletedClick "
+            @click="filter = 'completed'"
                :class="{active: filter === 'completed'}" 
                > 
                Completed</button>
@@ -195,16 +187,12 @@
                class="clear-btn"
                v-show="completedCount > 0"
                @click="clearCompleted"
-              >Clean Completed</button>
+              >Clear Completed</button>
          </footer>
-         <div class="first-dev"></div>
-         <div class="second-dev"></div>
+         <div class="first-dev" v-show="todos.length > 0" ></div>
+         <div class="second-dev" v-show="todos.length > 0" ></div>
       </section>
-      <footer class="info">
-         <p>Double-click to edit a todo</p>
-         <p>Created by the TodoMVC Team</p>
-         <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-      </footer>
+       
    </div>
 </template>
 
@@ -214,7 +202,7 @@
    padding:0;
 }
 #app{
-   max-width: 460px;
+   max-width: 550px;
    min-height: 130px;
    line-height: 1.4rem;
    margin:0 auto;
@@ -224,7 +212,7 @@
    min-height: 85vh;
    
    .todoapp{
-      width: 454px;
+      width: 100%;
       height: 65px;
       margin: 130px 0 40px;
       position: relative;
@@ -282,6 +270,7 @@
             bottom: 100%;
             border: none;
             caret-color: transparent;
+            box-sizing: border-box;
          }
          .toggle-all-label{
             width: 45px;
@@ -343,7 +332,7 @@
                   font-size: 24px;
                   color: #212529;
                   font-weight: 400;
-                  width: 370px;
+                  width: 440px;
                }
                .view input[type="checkbox"]:checked + label {
                   color: #adb5bd;
@@ -355,8 +344,8 @@
                   color: #ced4da;
                   font-size: 24px;
                   opacity: 0;
-                  width: 20px;
-                  height: 20px;
+                  width: 40px;
+                  height: 40px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -366,15 +355,20 @@
                   color: #e83e8c;
                   opacity: 1 !important;
                }
+               .view button:active{
+                  border: 2px solid #b83f45;
+               }
                
                .input-container {
                   width:  100%;
                   height: 100%;
                   border: none;
+                  background-color: skyblue;
                   box-sizing: border-box;
                   .edit {
-                     width: 100%;
+                     padding-left:20px;
                      height: 100%;
+                     background-color: pink;
                      width: calc(100% - 45px); /* 减去左边距 */
                      margin-left: 45px;
                      font-size: 24px;
@@ -393,22 +387,36 @@
         
       }
       .footer{
+         position: relative;
          width: 100%;
+         height: 45px;
          display: flex;
          padding: 10px 15px ;
          box-sizing: border-box;
          align-items: center;
-         justify-content: space-between;
          font-size: 14px;
          border: 1px solid #aaa;
          box-shadow: 0 2px 4px #0003, 0 25px 50px #0000001a;
+         .items-count{
+            position: absolute;
+            left: 20px;
+         }
+         .clear-btn{
+            position: absolute;
+            right: 10px;
+         }
          .filters{
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 10px; 
             button {
-               border: none;
+               border: 1px solid transparent;
                background: #fff;
                cursor: pointer;
+               padding:  1px 5px;
+               border-radius: 2px;
             }
             button:hover{
                border: 1px solid  #b83f45
@@ -448,13 +456,7 @@
       }
      
    }
-    .info {
-      margin: 365px auto 0;
-      color: #4d4d4d;
-      font-size: 11px;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
-      text-align: center;
-   }
+    
 }
 </style>
 
