@@ -86,7 +86,6 @@
    // 完成编辑
    const finishEditing = (todo) => {
       // 避免blur重复执行函数
-      if (editingId.value === null) return;
       const trimmedText  = editingText.value.trim()
       if (!trimmedText || trimmedText === todo.text){
          todos.value = todos.value.filter(t => t.id !== todo.id)
@@ -99,6 +98,22 @@
       editingId.value = null
       editingText.value = ''
    }
+   // blur专用函数
+   const blurEditing = (todo) => {
+      // 避免blur重复执行函数
+      const trimmedText  = editingText.value.trim()
+      if (!trimmedText){
+         todos.value = todos.value.filter(t => t.id !== todo.id)
+      } 
+      else {
+         todos.value = todos.value.map(t => 
+            t.id === todo.id ? {...t,text:trimmedText} :t
+         )
+      }
+      editingId.value = null
+      editingText.value = ''
+   }
+
 
    // 取消编辑
    const cancelEditing = () => {
@@ -144,8 +159,7 @@
                      <input 
                      type="checkbox" 
                      :checked="todo.completed"
-                     
-                     @click="toggleTodo(todo.id)"
+                     @change="toggleTodo(todo.id)"
                      >
                      <label   @dblclick="startEditing(todo)">{{ todo.text }}</label>
                      <button @click="removeTodo(todo.id)">
@@ -157,7 +171,7 @@
                   v-show="editingId === todo.id"
                   >
                      <input :id="`edit-input-${todo.id}`" type="text" class="edit" v-model="editingText"
-                      @keydown="saveOnEnter($event, todo)" @blur="finishEditing(todo)">
+                      @keydown="saveOnEnter($event, todo)" @blur="blurEditing(todo)">
                   </div>
                </li>
             </ul>
@@ -363,12 +377,10 @@
                   width:  100%;
                   height: 100%;
                   border: none;
-                  background-color: skyblue;
                   box-sizing: border-box;
                   .edit {
                      padding-left:20px;
                      height: 100%;
-                     background-color: pink;
                      width: calc(100% - 45px); /* 减去左边距 */
                      margin-left: 45px;
                      font-size: 24px;
