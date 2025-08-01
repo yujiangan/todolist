@@ -8,6 +8,7 @@
       { id: 2, text: 'Build a Todo App', completed: false },
       { id: 3, text: 'Deploy to production', completed: false }
    ])
+   // 提交PR
    // 筛选项
    const filter = ref('all')
    // 未完成数量
@@ -38,6 +39,7 @@
             completed:false
          })
          newTodo.value = ''
+         
       }
    }
    // 删除任务
