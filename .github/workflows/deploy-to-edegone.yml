@@ -1,0 +1,32 @@
+# .github/workflows/deploy-to-edgeone.yml
+name: Deploy to EdgeOne Pages
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22.11.0"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test project
+        run: npm run lint
+
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to EdgeOne Pages
+        run: npx edgeone pages deploy ./dist -n todolist -t ${{ secrets.EDGEONE_API_TOKEN }}
+        env:
+          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
