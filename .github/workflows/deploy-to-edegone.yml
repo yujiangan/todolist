@@ -1,12 +1,11 @@
 # .github/workflows/deploy-to-edgeone.yml
 name: Deploy to EdgeOne Pages
 on:
-  pull_request:
-    branches: [main]
-    types: [closed]
+  push:
+    branches:
+      - main
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
