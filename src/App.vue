@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< HEAD
 import { ref, computed, nextTick } from "vue";
 // 输入框值
 const newTodo = ref("");
@@ -56,65 +55,6 @@ const toggleTodo = (id) => {
     todo.id === id ? { ...todo, completed: !todo.completed } : todo,
   );
 };
-=======
-   import {ref,computed,nextTick} from 'vue'
-   // 输入框值
-   const newTodo = ref('')
-   // 任务列表
-   const todos = ref([
-      { id: 1, text: 'Learn Vue 3', completed: true },
-      { id: 2, text: 'Build a Todo App', completed: false },
-      { id: 3, text: 'Deploy to production', completed: false }
-   ])
- 
-   // 筛选项
-   const filter = ref('all')
-   // 未完成数量
-   const remaining = computed(()=> {
-      return todos.value.filter(todo => !todo.completed).length
-   })
-   // 已完成数量
-   const completedCount = computed(() => {
-      return todos.value.filter(todo => todo.completed).length
-   })
-   // 根据筛选项过滤任务
-   const filteredTodos = computed(() => {
-      switch (filter.value) {
-         case 'active':
-            return todos.value.filter(todo => !todo.completed)
-         case 'completed':
-            return todos.value.filter(todo => todo.completed)
-         default:
-            return todos.value
-      }
-   })
-   // 添加新任务
-   const addTodo = () => {
-      if(newTodo.value.trim()){
-         todos.value.push({
-            id:+new Date(),
-            text:newTodo.value.trim(),
-            completed:false
-         })
-         newTodo.value = ''
-         
-      }
-   }
-   // 删除任务
-   const removeTodo = (id) => {
-      todos.value = todos.value.filter(todo => todo.id !== id)
-   }
-   // 清除已完成任务
-   const clearCompleted = () => {
-      todos.value = todos.value.filter(todo => !todo.completed)
-   }
-   // 切换单个状态
-   const toggleTodo = (id) => {
-      todos.value = todos.value.map(todo =>
-         todo.id === id ? {...todo, completed : !todo.completed}  : todo
-      )
-   }
->>>>>>> 90f9a2c59ea7984810cc06e886f2b0045bbb4965
 
 // 切换所有任务状态
 const toggleAll = () => {
