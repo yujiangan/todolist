@@ -133,15 +133,15 @@ const saveOnEnter = (e, todo) => {
         </a>
         <input
           type="text"
-          class="new-todo bg-[rgba(0, 0, 0, 0.003)] box-border h-[65px] w-full border-0 py-[16px] pr-[16px] pl-[60px] align-middle text-[22px] leading-[22px] font-extralight"
+          class="new-todo  w-full  "
           placeholder="What needs to be done?"
           v-model="newTodo"
           @keydown.enter="addTodo"
         />
       </header>
-      <main class="relative box-border w-full border-x-[1px] border-solid border-[#aaa]">
+      <main class="relative box-border w-full border-x-[1px]  border-[#aaa]">
         <input
-          class="absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus:border-solid focus:border-[#b83f45] focus:outline-0"
+          class="absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus: focus:border-[#b83f45] focus:outline-0"
           id="toggle-all-input"
           @click="toggleAll"
           v-show="todos.length > 0"
@@ -156,14 +156,14 @@ const saveOnEnter = (e, todo) => {
         <ul class="list-none">
           <li
             v-for="todo in filteredTodos"
-            class="relative flex h-[65px] items-center border-b-[1px] border-solid border-[#aaa]"
+            class="relative flex h-[65px] items-center border-b-[1px]  border-[#aaa]"
             :key="todo.id"
           >
             <div class="group flex w-full items-center" v-show="editingId !== todo.id">
               <input
                 type="checkbox"
                 :checked="todo.completed"
-                class="peer relative my-0 mr-[20px] ml-[8px] h-[28px] w-[28px] appearance-none rounded-full border-[1px] border-solid border-[#dee2e6] transition-all duration-200 checked:border-[#20c997]"
+                class="check-mark peer relative my-0 mr-[20px] ml-[8px] h-[28px] w-[28px] appearance-none rounded-full border-[1px]  border-[#dee2e6] transition-all duration-200 checked:border-[#20c997]"
                 @change="toggleTodo(todo.id)"
               />
               <label
@@ -192,7 +192,7 @@ const saveOnEnter = (e, todo) => {
         </ul>
       </main>
       <footer
-        class="relative box-border flex h-[45px] w-full items-center border border-solid border-[#aaa] px-[15px] py-[10px] text-[14px] shadow-[0_2px_4px_rgba(0,0,0,0.03),0_25px_50px_rgba(0,0,0,0.1)]"
+        class="relative box-border flex h-[45px] w-full items-center border  border-[#aaa] px-[15px] py-[10px] text-[14px] shadow-[0_2px_4px_rgba(0,0,0,0.03),0_25px_50px_rgba(0,0,0,0.1)]"
         v-show="todos.length > 0"
       >
         <div class="absolute left-[20px]">
@@ -200,21 +200,21 @@ const saveOnEnter = (e, todo) => {
         </div>
         <div class="absolute left-1/2 flex -translate-x-1/2 transform gap-[10px]">
           <button
-            class="cursor-pointer rounded-[2px] border border-solid border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-solid hover:border-[#b83f45]"
+            class="cursor-pointer rounded-[2px] border  border-transparent bg-white px-[5px] py-[1px] hover:border hover: hover:border-[#b83f45]"
             @click="filter = 'all'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'all' }"
           >
             All
           </button>
           <button
-            class="cursor-pointer rounded-[2px] border border-solid border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-solid hover:border-[#b83f45]"
+            class="cursor-pointer rounded-[2px] border  border-transparent bg-white px-[5px] py-[1px] hover:border hover: hover:border-[#b83f45]"
             @click="filter = 'active'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'active' }"
           >
             Active
           </button>
           <button
-            class="cursor-pointer rounded-[2px] border border-solid border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-solid hover:border-[#b83f45]"
+            class="cursor-pointer rounded-[2px] border  border-transparent bg-white px-[5px] py-[1px] hover:border hover: hover:border-[#b83f45]"
             @click="filter = 'completed'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'completed' }"
           >
@@ -222,7 +222,7 @@ const saveOnEnter = (e, todo) => {
           </button>
         </div>
         <button
-          class="absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover:border-solid hover:border-[#b83f45]"
+          class="absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover: hover:border-[#b83f45]"
           v-show="completedCount > 0"
           @click="clearCompleted"
         >
@@ -230,11 +230,11 @@ const saveOnEnter = (e, todo) => {
         </button>
       </footer>
       <div
-        class="mx-auto my-0 h-[2px] w-[95%] border border-t-0 border-solid border-[#aaa]"
+        class="mx-auto my-0 h-[2px] w-[95%] border border-t-0  border-[#aaa]"
         v-show="todos.length > 0"
       ></div>
       <div
-        class="mx-auto my-0 h-[2px] w-[90%] border border-t-0 border-solid border-[#aaa]"
+        class="mx-auto my-0 h-[2px] w-[90%] border border-t-0  border-[#aaa]"
         v-show="todos.length > 0"
       ></div>
     </section>
@@ -242,23 +242,7 @@ const saveOnEnter = (e, todo) => {
 </template>
 
 <style scoped>
-input[type="checkbox"]::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14px;
-  height: 7px;
-  border: 2px solid #20c997;
-  border-top: none;
-  border-right: none;
-  transform: translate(-50%, -70%) rotate(-45deg);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-input[type="checkbox"]:checked::after {
-  opacity: 1;
-}
+
 .edit:focus {
   padding-left: 20px;
   height: 100%;
