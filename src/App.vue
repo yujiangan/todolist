@@ -244,13 +244,8 @@ const saveOnEnter = (e, todo) => {
 <style scoped>
 
 .edit:focus {
-  padding-left: 20px;
-  height: 100%;
-  width: calc(100% - 45px); /* 减去左边距 */
-  margin-left: 45px;
-  font-size: 24px;
   outline: 2px solid #b83f45;
-  box-sizing: border-box;
+  font-size: 22px;
 }
 .new-todo:focus {
   outline: 2px solid #b83f45;

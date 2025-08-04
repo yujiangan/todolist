@@ -10,9 +10,15 @@
 }
 @layer components {
   .check-mark{
-    @apply checked:after:opacity-100 after:opacity-0 after:content-['']  after:absolute after:top-[50%] after:left-[50%] after:w-[14px] after:h-[7px] after:border-[2px] after:border-[#20c997] after:border-t-0 after:border-r-0 after:translate-x-[-50%] after:translate-y-[-70%] after:rotate-[-45deg]  ;
+    &::after{
+      @apply opacity-0 content-[''] absolute top-[50%] left-[50%] 
+            w-[14px] h-[7px] border-[2px] border-[#20c997] 
+            border-t-0 border-r-0 translate-x-[-50%] 
+            translate-y-[-70%] rotate-[-45deg];
+    }
+    &:checked::after {
+      @apply opacity-100;  
+    }
   }
-  /* .new-todo{
-    @apply text-[22px] py-4 pr-4 pl-[60px] h-[65px] border-0 font-extralight bg-[rgba(0, 0, 0, 0.003)] box-border shadow-[2px_2px_10px_rgba(0, 0, 0, 0.2)] focus:outline-2 focus:outline-solid focus:outline-[#b83f45] placeholder:text-[#aaa] placeholder:italic placeholder:font-light ;
-  } */
+   
 }
