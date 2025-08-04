@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+@layer components {
+  .check-mark{
+    &::after{
+      @apply opacity-0 content-[''] absolute top-[50%] left-[50%] 
+            w-[14px] h-[7px] border-[2px] border-[#20c997] 
+            border-t-0 border-r-0 translate-x-[-50%] 
+            translate-y-[-70%] rotate-[-45deg];
+    }
+    &:checked::after {
+      @apply opacity-100;  
+    }
+  }
+   
+}
