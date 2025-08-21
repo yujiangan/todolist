@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*", "eslint.config.js", "vite.config.js"]
+  "include": ["src/**/*", "eslint.config.js", "vite.config.js","components.d.ts"]
 }
