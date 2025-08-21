@@ -1,42 +1,22 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import globals from "globals";
-import js from "@eslint/js";
+import { globalIgnores } from "eslint/config";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
 import pluginVue from "eslint-plugin-vue";
-// import typescriptEslintParser from "@typescript-eslint/parser";
-import typescriptEslintPlugin from "@typescript-eslint/eslint-plugin";
-import vueEslintParser from "vue-eslint-parser";
+import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 
-export default defineConfig([
+// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
+// import { configureVueProject } from '@vue/eslint-config-typescript'
+// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
+// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+
+export default defineConfigWithVueTs(
   {
     name: "app/files-to-lint",
-    files: ["**/*.{js,mjs,jsx,vue,ts,tsx}"],
+    files: ["**/*.{ts,mts,tsx,vue}"],
   },
 
   globalIgnores(["**/dist/**", "**/dist-ssr/**", "**/coverage/**"]),
 
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-      parser: vueEslintParser,
-      parserOptions: {
-        ecmaVersion: "latest", 
-        sourceType: "module",
-        project: "./tsconfig.json",
-        extraFileExtensions: [".vue"],
-        parser: "@typescript-eslint/parser",
-      },
-    },
-    plugins: {
-      "@typescript-eslint": typescriptEslintPlugin,
-    },
-    rules: {
-      // 添加 TypeScript 推荐规则
-      ...typescriptEslintPlugin.configs.recommended.rules,
-    },
-  },
-
-  js.configs.recommended,
-  ...pluginVue.configs["flat/essential"],
-]);
+  pluginVue.configs["flat/essential"],
+  vueTsConfigs.recommended,
+  skipFormatting,
+);

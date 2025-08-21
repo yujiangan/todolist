@@ -6,7 +6,7 @@ interface Todo {
   completed: boolean;
 }
 // 输入框值
-const newTodo: Ref<string> = ref("");
+const newTodo = ref("");
 // 任务列表
 const todos: Ref<Todo[]> = ref([
   { id: 1, text: "Learn Vue 3", completed: true },
@@ -17,15 +17,15 @@ const todos: Ref<Todo[]> = ref([
 // 筛选项
 const filter: Ref<"all" | "active" | "completed"> = ref("all");
 // 未完成数量
-const remaining = computed((): number => {
+const remaining = computed(() => {
   return todos.value.filter((todo) => !todo.completed).length;
 });
 // 已完成数量
-const completedCount = computed((): number => {
+const completedCount = computed(() => {
   return todos.value.filter((todo) => todo.completed).length;
 });
 // 根据筛选项过滤任务
-const filteredTodos = computed((): Todo[] => {
+const filteredTodos = computed(() => {
   switch (filter.value) {
     case "active":
       return todos.value.filter((todo) => !todo.completed);
@@ -36,7 +36,7 @@ const filteredTodos = computed((): Todo[] => {
   }
 });
 // 添加新任务
-const addTodo = (): void => {
+const addTodo = () => {
   if (newTodo.value.trim()) {
     todos.value.push({
       id: +new Date(),
@@ -47,7 +47,7 @@ const addTodo = (): void => {
   }
 };
 // 删除任务
-const removeTodo = (id: number): void => {
+const removeTodo = (id: number) => {
   todos.value = todos.value.filter((todo) => todo.id !== id);
 };
 // 清除已完成任务
@@ -55,14 +55,14 @@ const clearCompleted = () => {
   todos.value = todos.value.filter((todo) => !todo.completed);
 };
 // 切换单个状态
-const toggleTodo = (id: number): void => {
+const toggleTodo = (id: number) => {
   todos.value = todos.value.map((todo) =>
     todo.id === id ? { ...todo, completed: !todo.completed } : todo,
   );
 };
 
 // 切换所有任务状态
-const toggleAll = (): void => {
+const toggleAll = () => {
   const allCompleted = todos.value.every((todo) => todo.completed);
   todos.value = todos.value.map((todo) => ({
     ...todo,
@@ -72,7 +72,7 @@ const toggleAll = (): void => {
 
 // 编辑状态
 const editingId: Ref<number | null> = ref(null);
-const editingText: Ref<string> = ref("");
+const editingText = ref("");
 // 开始编辑任务
 const startEditing = (todo: Todo) => {
   editingId.value = todo.id;
@@ -89,7 +89,7 @@ const startEditing = (todo: Todo) => {
 };
 
 // 完成编辑
-const finishEditing = (todo: Todo): void => {
+const finishEditing = (todo: Todo) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   if (!trimmedText || trimmedText === todo.text) {
@@ -101,7 +101,7 @@ const finishEditing = (todo: Todo): void => {
   editingText.value = "";
 };
 // blur专用函数
-const blurEditing = (todo: Todo): void => {
+const blurEditing = (todo: Todo) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   if (!trimmedText) {
@@ -114,13 +114,13 @@ const blurEditing = (todo: Todo): void => {
 };
 
 // 取消编辑
-const cancelEditing = (): void => {
+const cancelEditing = () => {
   editingId.value = null;
   editingText.value = "";
 };
 
 // 保存编辑（按回车键）退出编辑（esc）
-const saveOnEnter = (e:KeyboardEvent, todo: Todo): void => {
+const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
   if (e.key === "Enter") {
     finishEditing(todo);
   } else if (e.key === "Escape") {
@@ -146,7 +146,7 @@ const saveOnEnter = (e:KeyboardEvent, todo: Todo): void => {
       </header>
       <main class="relative box-border w-full border-x-[1px] border-[#aaa]">
         <input
-          class="focus: absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus:border-[#b83f45] focus:outline-0"
+          class=" absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus:border-[#b83f45] focus:outline-0"
           id="toggle-all-input"
           @click="toggleAll"
           v-show="todos.length > 0"
@@ -205,21 +205,21 @@ const saveOnEnter = (e:KeyboardEvent, todo: Todo): void => {
         </div>
         <div class="absolute left-1/2 flex -translate-x-1/2 transform gap-[10px]">
           <button
-            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'all'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'all' }"
           >
             All
           </button>
           <button
-            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'active'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'active' }"
           >
             Active
           </button>
           <button
-            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'completed'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'completed' }"
           >
@@ -227,7 +227,7 @@ const saveOnEnter = (e:KeyboardEvent, todo: Todo): void => {
           </button>
         </div>
         <button
-          class="hover: absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover:border-[#b83f45]"
+          class=" absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover:border-[#b83f45]"
           v-show="completedCount > 0"
           @click="clearCompleted"
         >
