@@ -146,7 +146,7 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
       </header>
       <main class="relative box-border w-full border-x-[1px] border-[#aaa]">
         <input
-          class=" absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus:border-[#b83f45] focus:outline-0"
+          class="absolute bottom-full box-border h-[65px] w-[45px] border-0 caret-[transparent] focus:border-2 focus:border-[#b83f45] focus:outline-0"
           id="toggle-all-input"
           @click="toggleAll"
           v-show="todos.length > 0"
@@ -205,21 +205,21 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
         </div>
         <div class="absolute left-1/2 flex -translate-x-1/2 transform gap-[10px]">
           <button
-            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'all'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'all' }"
           >
             All
           </button>
           <button
-            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'active'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'active' }"
           >
             Active
           </button>
           <button
-            class="hover:cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
+            class="hover: cursor-pointer rounded-[2px] border border-transparent bg-white px-[5px] py-[1px] hover:border hover:border-[#b83f45]"
             @click="filter = 'completed'"
             :class="{ 'shadow-[0_0_0_2px_#b83f45]': filter === 'completed' }"
           >
@@ -227,7 +227,7 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
           </button>
         </div>
         <button
-          class=" absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover:border-[#b83f45]"
+          class="hover: absolute right-[10px] cursor-pointer border-0 bg-white hover:border hover:border-[#b83f45]"
           v-show="completedCount > 0"
           @click="clearCompleted"
         >
