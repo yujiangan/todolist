@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, Ref } from "vue";
+import { ref, computed, nextTick, Ref ,onMounted} from "vue";
+import {apifetchTodos,apiaddTodo,apiupdateTodo,apitoggleAllTodos,apideleteTodo,apideleteCompletedTodos} from "@/api/axios-apilist";
 interface Todo {
   id: number;
   text: string;
@@ -8,12 +9,11 @@ interface Todo {
 // 输入框值
 const newTodo = ref("");
 // 任务列表
-const todos: Ref<Todo[]> = ref([
-  { id: 1, text: "Learn Vue 3", completed: true },
-  { id: 2, text: "Build a Todo App", completed: false },
-  { id: 3, text: "Deploy to production", completed: false },
-]);
-// 提交PR
+const todos: Ref<Todo[]> = ref([]);
+onMounted(async () => {
+  todos.value = await apifetchTodos();
+})
+
 // 筛选项
 const filter: Ref<"all" | "active" | "completed"> = ref("all");
 // 未完成数量
@@ -36,47 +36,60 @@ const filteredTodos = computed(() => {
   }
 });
 // 添加新任务
-const addTodo = () => {
-  if (newTodo.value.trim()) {
-    todos.value.push({
-      id: +new Date(),
-      text: newTodo.value.trim(),
-      completed: false,
-    });
+const addTodo = async () => {
+  const text = newTodo.value.trim();
+  if (text) {
+    try {
+      todos.value = await apiaddTodo(text);
+    } catch (error) {
+      console.error('添加待办事项失败:', error);
+      throw error;
+    }
     newTodo.value = "";
   }
 };
 // 删除任务
-const removeTodo = (id: number) => {
-  todos.value = todos.value.filter((todo) => todo.id !== id);
+const removeTodo = async (id: number) => {
+  todos.value = await apideleteTodo(id);
 };
 // 清除已完成任务
-const clearCompleted = () => {
-  todos.value = todos.value.filter((todo) => !todo.completed);
-};
+const clearCompleted = async () => {
+  todos.value = await apideleteCompletedTodos();
+}
 // 切换单个状态
-const toggleTodo = (id: number) => {
-  todos.value = todos.value.map((todo) =>
-    todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-  );
+const toggleTodo = async (id: number) => {
+  const todo = todos.value.find(t => t.id === id);
+  if (todo) {
+    const updatedTodo = { ...todo, completed: !todo.completed };
+    todos.value = todos.value.map(t => t.id === id ? updatedTodo : t);
+    try {
+      await apiupdateTodo(updatedTodo);
+    } catch (error) {
+      console.error('切换任务状态失败:', error);
+      todos.value = todos.value.map(t => t.id === id ? todo : t);
+    }
+  }
 };
 
 // 切换所有任务状态
-const toggleAll = () => {
+const toggleAll = async () => {
   const allCompleted = todos.value.every((todo) => todo.completed);
-  todos.value = todos.value.map((todo) => ({
-    ...todo,
-    completed: !allCompleted,
-  }));
+  try{
+    todos.value = await apitoggleAllTodos(allCompleted);
+  } catch (error) {
+    console.error('切换所有任务状态失败:', error);
+    throw error;
+  }
 };
 
 // 编辑状态
 const editingId: Ref<number | null> = ref(null);
 const editingText = ref("");
 // 开始编辑任务
-const startEditing = (todo: Todo) => {
+const startEditing =  (todo: Todo) => {
   editingId.value = todo.id;
   editingText.value = todo.text;
+   
   // 等待DOM更新后自动聚焦
   nextTick(() => {
     const input = document.getElementById(`edit-input-${todo.id}`) as HTMLInputElement | null;
@@ -84,30 +97,56 @@ const startEditing = (todo: Todo) => {
       input.focus();
       // 选中所有文本以便直接替换
       input.setSelectionRange(0, input.value.length);
+
     }
   });
 };
 
 // 完成编辑
-const finishEditing = (todo: Todo) => {
+const finishEditing = async(todo: Todo) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
+  // 输入为空或者与原文本相同则删除任务
   if (!trimmedText || trimmedText === todo.text) {
     todos.value = todos.value.filter((t) => t.id !== todo.id);
+    try {
+      await apideleteTodo(todo.id);
+    } catch (error) {
+      console.error('删除待办事项失败:', error);
+      throw error;
+    }
   } else {
     todos.value = todos.value.map((t) => (t.id === todo.id ? { ...t, text: trimmedText } : t));
+    try {
+      await apiupdateTodo({ ...todo, text: trimmedText });
+    } catch (error) {
+      console.error('更新待办事项失败:', error);
+      throw error;
+    }
   }
   editingId.value = null;
   editingText.value = "";
 };
 // blur专用函数
-const blurEditing = (todo: Todo) => {
+const blurEditing = async (todo: Todo) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   if (!trimmedText) {
     todos.value = todos.value.filter((t) => t.id !== todo.id);
+    try {
+      await apideleteTodo(todo.id);
+    } catch (error) {
+      console.error('删除待办事项失败:', error);
+      throw error;
+    }
   } else {
     todos.value = todos.value.map((t) => (t.id === todo.id ? { ...t, text: trimmedText } : t));
+    try {
+      await apiupdateTodo({ ...todo, text: trimmedText });
+    } catch (error) {
+      console.error('更新待办事项失败:', error);
+      throw error;
+    }
   }
   editingId.value = null;
   editingText.value = "";
@@ -121,11 +160,12 @@ const cancelEditing = () => {
 
 // 保存编辑（按回车键）退出编辑（esc）
 const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
+
   if (e.key === "Enter") {
     finishEditing(todo);
-  } else if (e.key === "Escape") {
+    } else if (e.key === "Escape") {
     cancelEditing();
-  }
+    }
 };
 </script>
 
