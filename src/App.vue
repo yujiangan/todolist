@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, Ref ,onMounted} from "vue";
-import {apifetchTodos,apiaddTodo,apiupdateTodo,apitoggleAllTodos,apideleteTodo,apideleteCompletedTodos} from "@/api/axios-apilist";
+import { ref, computed, nextTick, Ref, onMounted } from 'vue';
+import * as apis from '@/api/axios-apilist';
+ 
 interface Todo {
   id: number;
   text: string;
@@ -11,7 +12,7 @@ const newTodo = ref("");
 // 任务列表
 const todos: Ref<Todo[]> = ref([]);
 onMounted(async () => {
-  todos.value = await apifetchTodos();
+  todos.value = await apis.fetchTodos();
 })
 
 // 筛选项
@@ -40,7 +41,8 @@ const addTodo = async () => {
   const text = newTodo.value.trim();
   if (text) {
     try {
-      todos.value = await apiaddTodo(text);
+      const newAddedTodo = await apis.addTodo(text);
+      todos.value.push(newAddedTodo);
     } catch (error) {
       console.error('添加待办事项失败:', error);
       throw error;
@@ -50,11 +52,11 @@ const addTodo = async () => {
 };
 // 删除任务
 const removeTodo = async (id: number) => {
-  todos.value = await apideleteTodo(id);
+  todos.value = await apis.deleteTodo(id);
 };
 // 清除已完成任务
 const clearCompleted = async () => {
-  todos.value = await apideleteCompletedTodos();
+  todos.value = await apis.deleteCompletedTodos();
 }
 // 切换单个状态
 const toggleTodo = async (id: number) => {
@@ -63,7 +65,7 @@ const toggleTodo = async (id: number) => {
     const updatedTodo = { ...todo, completed: !todo.completed };
     todos.value = todos.value.map(t => t.id === id ? updatedTodo : t);
     try {
-      await apiupdateTodo(updatedTodo);
+      await apis.updateTodo(updatedTodo);
     } catch (error) {
       console.error('切换任务状态失败:', error);
       todos.value = todos.value.map(t => t.id === id ? todo : t);
@@ -75,7 +77,7 @@ const toggleTodo = async (id: number) => {
 const toggleAll = async () => {
   const allCompleted = todos.value.every((todo) => todo.completed);
   try{
-    todos.value = await apitoggleAllTodos(allCompleted);
+    todos.value = await apis.toggleAllTodos(allCompleted);
   } catch (error) {
     console.error('切换所有任务状态失败:', error);
     throw error;
@@ -110,7 +112,7 @@ const finishEditing = async(todo: Todo) => {
   if (!trimmedText || trimmedText === todo.text) {
     todos.value = todos.value.filter((t) => t.id !== todo.id);
     try {
-      await apideleteTodo(todo.id);
+      await apis.deleteTodo(todo.id);
     } catch (error) {
       console.error('删除待办事项失败:', error);
       throw error;
@@ -118,7 +120,7 @@ const finishEditing = async(todo: Todo) => {
   } else {
     todos.value = todos.value.map((t) => (t.id === todo.id ? { ...t, text: trimmedText } : t));
     try {
-      await apiupdateTodo({ ...todo, text: trimmedText });
+      await apis.updateTodo({ ...todo, text: trimmedText });
     } catch (error) {
       console.error('更新待办事项失败:', error);
       throw error;
@@ -134,7 +136,7 @@ const blurEditing = async (todo: Todo) => {
   if (!trimmedText) {
     todos.value = todos.value.filter((t) => t.id !== todo.id);
     try {
-      await apideleteTodo(todo.id);
+      await apis.deleteTodo(todo.id);
     } catch (error) {
       console.error('删除待办事项失败:', error);
       throw error;
@@ -142,7 +144,7 @@ const blurEditing = async (todo: Todo) => {
   } else {
     todos.value = todos.value.map((t) => (t.id === todo.id ? { ...t, text: trimmedText } : t));
     try {
-      await apiupdateTodo({ ...todo, text: trimmedText });
+      await apis.updateTodo({ ...todo, text: trimmedText });
     } catch (error) {
       console.error('更新待办事项失败:', error);
       throw error;

@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
 )
 
 // 获取待办事项列表
-export const apifetchTodos = async ():Promise<TodoItem[]> => {
+export const fetchTodos = async ():Promise<TodoItem[]> => {
     try {
         return await apiClient.get('./list')
     } catch (error) {
@@ -43,7 +43,7 @@ export const apifetchTodos = async ():Promise<TodoItem[]> => {
     }
 }
 // 添加待办事项
-export const apiaddTodo = async (text:string):Promise<TodoItem[]> => {
+export const addTodo = async (text:string):Promise<TodoItem> => {
     try {
         return await apiClient.post('./add',{text})
     } catch (error) {
@@ -52,7 +52,7 @@ export const apiaddTodo = async (text:string):Promise<TodoItem[]> => {
     }
 }
 // 更新待办事项
-export const apiupdateTodo = async (todo:TodoItem):Promise<TodoItem> => {
+export const updateTodo = async (todo:TodoItem):Promise<TodoItem> => {
     try {
         return await apiClient.put('./update', todo)
     } catch (error) {
@@ -61,16 +61,16 @@ export const apiupdateTodo = async (todo:TodoItem):Promise<TodoItem> => {
     }
 }
 // 删除待办事项
-export const apideleteTodo = async (id:number):Promise<TodoItem[]> => {
+export const deleteTodo = async (id:number):Promise<TodoItem[]> => {
     try {
-        return await apiClient.delete('./delete', { data: { id } })
+        return await apiClient.delete('./delete', {data:{id}})
     } catch (error) {
         console.error('删除待办事项失败:', error);
         throw error;
     }
 }
 // 全选改变全部完成状态
-export const apitoggleAllTodos = async (allCompleted:boolean):Promise<TodoItem[]> => {
+export const toggleAllTodos = async (allCompleted:boolean):Promise<TodoItem[]> => {
     try {
         return await apiClient.put('./toggle-all',{allCompleted})
     } catch (error) {
@@ -81,7 +81,7 @@ export const apitoggleAllTodos = async (allCompleted:boolean):Promise<TodoItem[]
 
  
 // 删除所有已完成的待办事项  
-export const apideleteCompletedTodos = async ():Promise<TodoItem[]> => {
+export const deleteCompletedTodos = async ():Promise<TodoItem[]> => {
     try {
         return await apiClient.delete('./delete-completed',)
     } catch (error) {

@@ -1,8 +1,8 @@
 import express from 'express'
-
+import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
-
+app.use(cors()); 
 app.use(express.json())
 const todos = [
     { id: 1, text: "Learn Vue 3", completed: true },
@@ -21,7 +21,7 @@ app.post('/add',(req,res) => {
     }
     const newTodo = {id:Date.now(),text,completed:false}
     todos.push(newTodo)
-    res.status(201).json(todos)
+    res.status(201).json(newTodo)
 })
 // 删
 app.delete('/delete',(req,res) => {
@@ -31,7 +31,7 @@ app.delete('/delete',(req,res) => {
         return res.status(404).json({error:'未找到该任务'})
     }
     todos.splice(index,1)
-    res.status(204).json(todos)
+    res.json(todos)
 })
 // 改
 app.put('/update',(req,res) => {    
