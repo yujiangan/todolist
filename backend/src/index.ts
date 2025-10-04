@@ -2,7 +2,9 @@ import express from 'express'
 import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
-app.use(cors()); 
+app.use(cors({
+  origin: 'https://yujiangan.github.io'  // 你的前端实际域名（从报错里抄的）
+}));
 app.use(express.json())
 const todos = [
     { id: 1, text: "Learn Vue 3", completed: true },
