@@ -8,11 +8,13 @@ export interface TodoItem {
 }
 // 创建 Axios 实例
 const apiClient = axios.create({
-    baseURL: 'http://localhost:3000',
-    timeout: 10000,
-    headers:{
-        'Content-Type':'application/json'
-    }
+  baseURL: import.meta.env.MODE === 'development'
+    ? 'http://localhost:3000'   
+    : 'https://todolist-orpin-p.vercel.app',  
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
 })
 // 请求拦截器
 apiClient.interceptors.request.use(
