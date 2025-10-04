@@ -5,6 +5,7 @@
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "outDir": "./dist",
+    // 好像对啊
     "rootDir": "./src",
     "skipLibCheck": true,
     "strict": true,
