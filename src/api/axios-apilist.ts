@@ -10,7 +10,7 @@ export interface TodoItem {
 const apiClient = axios.create({
   baseURL: import.meta.env.MODE === 'development'
     ? 'http://localhost:3000'   
-    : 'https://todolist-git-dev-yujiangans-projects.vercel.app/',  
+    : 'https://todolist-orpin-pi.vercel.app/',  
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
