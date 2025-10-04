@@ -1,12 +1,14 @@
 {
   "name": "@todolist/backend",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"tsc --watch\" \"node --watch dist/index.js\"",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +19,16 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.9.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "concurrently": "^9.0.0",
+    "eslint": "^9.9.0",
+    "eslint-plugin-node": "^11.1.0",
     "ts-node": "^10.9.2"
-    
   }
 }
