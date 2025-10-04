@@ -3,7 +3,9 @@ import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
 app.use(cors({
-  origin: 'https://yujiangan.github.io'  // 你的前端实际域名（从报错里抄的）
+  origin: 'https://yujiangan.github.io',  
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  allowedHeaders: ['Content-Type']  
 }));
 app.use(express.json())
 const todos = [
