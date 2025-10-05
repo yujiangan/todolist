@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 const app = express()
-// const port = process.env.PORT ||3000
+const port = process.env.PORT ||3000
 app.use(cors({
-  origin: 'https://yujiangan.github.io',  
+  origin: '*',  
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
@@ -60,6 +60,10 @@ app.delete('/delete-completed',(req,res) => {
    todos.splice(0, todos.length, ...activeTodos);
    res.json(todos);
 })
- 
+
+// 启动服务器
+app.listen(port,() => {
+    console.log(`server is running at http://localhost:${port}`)
+})
 
 export default app
