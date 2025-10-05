@@ -9,7 +9,6 @@
     "start": "node dist/index.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "postbuild": "npm start"
   },
   "keywords": [],
   "author": "",
