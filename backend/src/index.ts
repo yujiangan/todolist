@@ -3,7 +3,7 @@ import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
 app.use(cors({
-  origin: '*',  
+  origin: ['http://localhost:3000',' https://yujiangan.github.io','https://todolist-git-dev-yujiangans-projects.vercel.app','https://todolist-orpin-pi.vercel.app/'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
