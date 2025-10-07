@@ -7,6 +7,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
+app.use(express.static('../public'));
 app.use(express.json())
 const todos = [
     { id: 1, text: "Learn Vue 3", completed: true },
