@@ -1,12 +1,12 @@
 import express from 'express'
-// import cors from 'cors'
+import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
-// app.use(cors({
-//   origin: ['http://localhost:3000','https://yujiangan.github.io','https://todolist-git-dev-yujiangans-projects.vercel.app','https://todolist-orpin-pi.vercel.app/'],
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
-//   allowedHeaders: ['Content-Type']  
-// }));
+app.use(cors({
+  origin: ['http://localhost:3000','https://yujiangan.github.io','https://todolist-git-dev-yujiangans-projects.vercel.app','https://todolist-orpin-pi.vercel.app/'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  
+  allowedHeaders: ['Content-Type']  
+}));
 app.use(express.static('../public'));
 app.use(express.json())
 const todos = [
