@@ -1,5 +1,5 @@
-{
-  "compilerOptions": {
+{  
+  "compilerOptions": {  
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -8,7 +8,11 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "eslint.config.js", "vite.config.js","components.d.ts"]
+  "include": ["src/**/*", "eslint.config.js", "src/vite.config.js","components.d.ts"]
 }
