@@ -1,5 +1,9 @@
-import "./index.css";
-import { createApp } from "vue";
+import { createSSRApp } from "vue";
 import App from "./App.vue";
 
-createApp(App).mount("#app");
+export  function createApp(initialState = []) {
+    const app = createSSRApp(App,{
+        todos:initialState
+    })
+    return {app}
+}

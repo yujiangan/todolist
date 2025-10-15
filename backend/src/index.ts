@@ -1,4 +1,5 @@
 import express from 'express'
+import fs from 'fs'
 import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
@@ -14,6 +15,21 @@ const todos = [
     { id: 2, text: "Build a Todo App", completed: false },
     { id: 3, text: "Deploy to production", completed: false }
 ]
+
+const template = fs.readFileSync('../src/index.html','utf-8')
+app.get('/',async (req,res) => {
+    try {
+        const { default:render} = await import ('../../dist/entry-server.js') as any
+        const appHtml = await render(req.url)
+        const html = template
+            .replace('%APP_HTML%',appHtml)
+            .replace('%INITIAL_STATE%',JSON.stringify(todos))
+        res.status(200).set({'Content-Type':'text/html'}).send(html)    
+    } catch (err) {
+        console.error(err)
+        res.status(500).send({'error':'服务器错误'})
+    }
+})
 // 查
 app.get('/list',(req,res) => {
     res.json(todos)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, Ref, onMounted } from 'vue';
+import { ref, computed, nextTick, Ref } from 'vue';
 import * as apis from '@/api/axios-apilist';
  
 interface Todo {
@@ -10,10 +10,14 @@ interface Todo {
 // 输入框值
 const newTodo = ref("");
 // 任务列表
-const todos: Ref<Todo[]> = ref([]);
-onMounted(async () => {
-  todos.value = await apis.fetchTodos();
-})
+const props = defineProps<{
+  todos: Todo[]
+}>();
+
+const todos: Ref<Todo[]> =  ref<Todo[]>(props.todos);
+// onMounted(async () => {
+//   todos.value = await apis.fetchTodos();
+// })
 
 // 筛选项
 const filter: Ref<"all" | "active" | "completed"> = ref("all");

@@ -12,7 +12,15 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "./",
   build:{
-    outDir:'../dist'
+    outDir:'../dist',
+    ssr:true,
+    rollupOptions: {
+      input : './entry-server.ts',
+      output: {
+        dir:'../dist',
+        entryFileNames:'entry-server.js'
+      }
+    }
   },
   plugins: [
     vue(),
