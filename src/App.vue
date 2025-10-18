@@ -184,7 +184,7 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
         </a>
         <input
           type="text"
-          class="new-todo w-full"
+          class="w-full border-none   p-4 pl-[60px] text-[22px] font-extralight   focus:outline-none focus:shadow-[0_0_0_2px_#b83f45] placeholder:text-[#aaa] placeholder:italic placeholder:font-light"
           placeholder="What needs to be done?"
           v-model="newTodo"
           @keydown.enter="addTodo"
@@ -297,22 +297,5 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
   outline: 2px solid #b83f45;
   font-size: 22px;
 }
-.new-todo:focus {
-  outline: 2px solid #b83f45;
-}
-.new-todo::placeholder {
-  color: #aaa;
-  font-style: italic;
-  font-weight: 300;
-}
-.new-todo {
-  font-size: 22px;
-  padding: 16px 16px 16px 60px;
-  height: 65px;
-  border: none;
-  font-weight: 200;
-  background: rgba(0, 0, 0, 0.003);
-  box-sizing: border-box;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-}
+
 </style>

@@ -1,5 +1,7 @@
 import express from 'express'
 import fs from 'fs'
+import path from 'path'
+import { render } from '../../src/entry-server.ts'
 import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
@@ -8,7 +10,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
-app.use(express.static('../public'));
+const clientDistPath = path.resolve(__dirname, '../../dist'); 
+app.use(express.static(clientDistPath)); 
+
 app.use(express.json())
 const todos = [
     { id: 1, text: "Learn Vue 3", completed: true },
@@ -16,15 +20,23 @@ const todos = [
     { id: 3, text: "Deploy to production", completed: false }
 ]
 
-const template = fs.readFileSync('../src/index.html','utf-8')
 app.get('/',async (req,res) => {
     try {
-        const { default:render} = await import ('../../dist/entry-server.js') as any
-        const appHtml = await render(req.url)
+        // 使用固定的初始数据，避免使用可能被修改的共享todos数组
+        const initialTodos = [
+            { id: 1, text: "Learn Vue 3", completed: true },
+            { id: 2, text: "Build a Todo App", completed: false },
+            { id: 3, text: "Deploy to production", completed: false }
+        ];
+        const { partial, initialState } = await render(initialTodos)
+        const templatePath = path.resolve(__dirname, '../../src/index.html');
+        const template = fs.readFileSync(templatePath, 'utf-8')
         const html = template
-            .replace('%APP_HTML%',appHtml)
-            .replace('%INITIAL_STATE%',JSON.stringify(todos))
-        res.status(200).set({'Content-Type':'text/html'}).send(html)    
+            .replace('<div id="app"></div>',
+            `<div id="app">${partial}</div>
+            <script>window.__INITIAL_STATE__=${JSON.stringify(initialState)};</script>
+            `)
+        res.send(html);
     } catch (err) {
         console.error(err)
         res.status(500).send({'error':'服务器错误'})

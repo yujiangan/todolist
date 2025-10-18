@@ -1,9 +1,5 @@
 import { createApp } from './main'
 import "./index.css"
+import App from './App.vue'
 
-
-const initialStateElement = document.getElementById('__INITIAL_STATE__');
-const initialState = initialStateElement ? JSON.parse(initialStateElement.textContent!) : [];
-const { app } = createApp(initialState)
-
-app.mount('#app')
+createApp(window.__INITIAL_STATE__).mount("#app", true);

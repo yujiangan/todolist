@@ -7,7 +7,9 @@ export interface TodoItem {
     completed: boolean;
 }
 // 创建 Axios 实例
-const currentOrigin = window.location.origin
+const currentOrigin = typeof window !== 'undefined' 
+  ? window.location.origin 
+  : 'http://localhost:3000';
 
 // 定义类型接口，添加索引签名
 interface OriginMap {
@@ -105,7 +107,7 @@ export const toggleAllTodos = async (allCompleted:boolean):Promise<TodoItem[]> =
 // 删除所有已完成的待办事项  
 export const deleteCompletedTodos = async ():Promise<TodoItem[]> => {
     try {
-        return await apiClient.delete('./delete-completed',)
+        return await apiClient.delete('./delete-completed')
     } catch (error) {
         console.error('删除所有已完成待办事项失败:', error);
         throw error;
