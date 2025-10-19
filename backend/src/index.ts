@@ -10,8 +10,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
-const clientDistPath = path.resolve(__dirname, '../../dist'); 
-app.use(express.static(clientDistPath)); 
+const clientpath = path.resolve(__dirname, '../../dist/client');
+app.use(express.static(clientpath)); 
+
 
 app.use(express.json())
 const todos = [
@@ -29,7 +30,7 @@ app.get('/',async (req,res) => {
             { id: 3, text: "Deploy to production", completed: false }
         ];
         const { partial, initialState } = await render(initialTodos)
-        const templatePath = path.resolve(__dirname, '../../src/index.html');
+        const templatePath = path.resolve(__dirname, '../../dist/client/index.html');
         const template = fs.readFileSync(templatePath, 'utf-8')
         const html = template
             .replace('<div id="app"></div>',

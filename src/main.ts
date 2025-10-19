@@ -1,7 +1,7 @@
 import { createSSRApp } from 'vue'
 import App from "./App.vue";
 
-export type Todo = {
+export interface Todo {
   id: number;
   text: string;
   completed: boolean;
