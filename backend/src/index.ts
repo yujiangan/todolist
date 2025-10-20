@@ -1,4 +1,8 @@
 import express from 'express'
+import fs from 'node:fs'
+import path from 'node:path'
+import { renderToString } from 'vue/server-renderer';
+import { createApp } from '@todolist/frontend/shared';
 import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
@@ -7,13 +11,37 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
-app.use(express.static('../public'));
+const publicPath = path.resolve(__dirname, '../../dist');
+app.use(
+  express.static(publicPath, {
+    index: false,
+  }),
+);
+
 app.use(express.json())
 const todos = [
     { id: 1, text: "Learn Vue 3", completed: true },
     { id: 2, text: "Build a Todo App", completed: false },
     { id: 3, text: "Deploy to production", completed: false }
 ]
+
+app.get('/', async (req, res) => {
+    const initialState = { todos };
+  
+    const app = createApp(initialState);
+    const partial = await renderToString(app);
+  
+    const template = fs.readFileSync(
+      path.resolve(__dirname, '../../dist/index.html'),
+      'utf-8',
+    );  
+    const html = template.replace(
+      '<div id="app"></div>',
+      `<div id="app">${partial}</div><script>window. __INITIAL_STATE__ =${JSON.stringify(initialState)}</script>`,
+    );  
+    res.send(html);
+});
+ 
 // 查
 app.get('/list',(req,res) => {
     res.json(todos)

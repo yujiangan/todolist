@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, Ref, onMounted } from 'vue';
+import { ref, computed, nextTick, Ref } from 'vue';
 import * as apis from '@/api/axios-apilist';
+import type { TodoItem } from './api/axios-apilist';
  
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+ 
 // 输入框值
 const newTodo = ref("");
 // 任务列表
-const todos: Ref<Todo[]> = ref([]);
-onMounted(async () => {
-  todos.value = await apis.fetchTodos();
-})
+const props = defineProps<{
+  todos: TodoItem[]
+}>();
+
+
+
+const todos: Ref<TodoItem[]> =  ref<TodoItem[]>(props.todos);
+ 
 
 // 筛选项
 const filter: Ref<"all" | "active" | "completed"> = ref("all");
@@ -88,7 +89,7 @@ const toggleAll = async () => {
 const editingId: Ref<number | null> = ref(null);
 const editingText = ref("");
 // 开始编辑任务
-const startEditing =  (todo: Todo) => {
+const startEditing =  (todo: TodoItem) => {
   editingId.value = todo.id;
   editingText.value = todo.text;
    
@@ -105,7 +106,7 @@ const startEditing =  (todo: Todo) => {
 };
 
 // 完成编辑
-const finishEditing = async(todo: Todo) => {
+const finishEditing = async(todo: TodoItem) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   // 输入为空或者与原文本相同则删除任务
@@ -130,7 +131,7 @@ const finishEditing = async(todo: Todo) => {
   editingText.value = "";
 };
 // blur专用函数
-const blurEditing = async (todo: Todo) => {
+const blurEditing = async (todo: TodoItem) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   if (!trimmedText) {
@@ -161,7 +162,7 @@ const cancelEditing = () => {
 };
 
 // 保存编辑（按回车键）退出编辑（esc）
-const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
+const saveOnEnter = (e: KeyboardEvent, todo: TodoItem) => {
 
   if (e.key === "Enter") {
     finishEditing(todo);
@@ -180,7 +181,7 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
         </a>
         <input
           type="text"
-          class="new-todo w-full"
+          class="w-full border-none   p-4 pl-[60px] text-[22px] font-extralight   focus:outline-none focus:shadow-[0_0_0_2px_#b83f45] placeholder:text-[#aaa] placeholder:italic placeholder:font-light"
           placeholder="What needs to be done?"
           v-model="newTodo"
           @keydown.enter="addTodo"
@@ -293,22 +294,5 @@ const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
   outline: 2px solid #b83f45;
   font-size: 22px;
 }
-.new-todo:focus {
-  outline: 2px solid #b83f45;
-}
-.new-todo::placeholder {
-  color: #aaa;
-  font-style: italic;
-  font-weight: 300;
-}
-.new-todo {
-  font-size: 22px;
-  padding: 16px 16px 16px 60px;
-  height: 65px;
-  border: none;
-  font-weight: 200;
-  background: rgba(0, 0, 0, 0.003);
-  box-sizing: border-box;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-}
+
 </style>
