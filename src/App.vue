@@ -1,23 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, Ref } from 'vue';
 import * as apis from '@/api/axios-apilist';
+import type { TodoItem } from './api/axios-apilist';
  
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+ 
 // 输入框值
 const newTodo = ref("");
 // 任务列表
 const props = defineProps<{
-  todos: Todo[]
+  todos: TodoItem[]
 }>();
 
-const todos: Ref<Todo[]> =  ref<Todo[]>(props.todos);
-// onMounted(async () => {
-//   todos.value = await apis.fetchTodos();
-// })
+
+
+const todos: Ref<TodoItem[]> =  ref<TodoItem[]>(props.todos);
+ 
 
 // 筛选项
 const filter: Ref<"all" | "active" | "completed"> = ref("all");
@@ -92,7 +89,7 @@ const toggleAll = async () => {
 const editingId: Ref<number | null> = ref(null);
 const editingText = ref("");
 // 开始编辑任务
-const startEditing =  (todo: Todo) => {
+const startEditing =  (todo: TodoItem) => {
   editingId.value = todo.id;
   editingText.value = todo.text;
    
@@ -109,7 +106,7 @@ const startEditing =  (todo: Todo) => {
 };
 
 // 完成编辑
-const finishEditing = async(todo: Todo) => {
+const finishEditing = async(todo: TodoItem) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   // 输入为空或者与原文本相同则删除任务
@@ -134,7 +131,7 @@ const finishEditing = async(todo: Todo) => {
   editingText.value = "";
 };
 // blur专用函数
-const blurEditing = async (todo: Todo) => {
+const blurEditing = async (todo: TodoItem) => {
   // 避免blur重复执行函数
   const trimmedText = editingText.value.trim();
   if (!trimmedText) {
@@ -165,7 +162,7 @@ const cancelEditing = () => {
 };
 
 // 保存编辑（按回车键）退出编辑（esc）
-const saveOnEnter = (e: KeyboardEvent, todo: Todo) => {
+const saveOnEnter = (e: KeyboardEvent, todo: TodoItem) => {
 
   if (e.key === "Enter") {
     finishEditing(todo);

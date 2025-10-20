@@ -1,7 +1,8 @@
 import express from 'express'
-import fs from 'fs'
-import path from 'path'
-import { render } from '../../src/entry-server.ts'
+import fs from 'node:fs'
+import path from 'node:path'
+import { renderToString } from 'vue/server-renderer';
+import { createApp } from '@todolist/frontend/shared';
 import cors from 'cors'
 const app = express()
 const port = process.env.PORT ||3000
@@ -10,9 +11,12 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  
   allowedHeaders: ['Content-Type']  
 }));
-const clientpath = path.resolve(__dirname, '../../dist/client');
-app.use(express.static(clientpath)); 
-
+const publicPath = path.resolve(__dirname, '../../dist');
+app.use(
+  express.static(publicPath, {
+    index: false,
+  }),
+);
 
 app.use(express.json())
 const todos = [
@@ -21,28 +25,23 @@ const todos = [
     { id: 3, text: "Deploy to production", completed: false }
 ]
 
-app.get('/',async (req,res) => {
-    try {
-        // 使用固定的初始数据，避免使用可能被修改的共享todos数组
-        const initialTodos = [
-            { id: 1, text: "Learn Vue 3", completed: true },
-            { id: 2, text: "Build a Todo App", completed: false },
-            { id: 3, text: "Deploy to production", completed: false }
-        ];
-        const { partial, initialState } = await render(initialTodos)
-        const templatePath = path.resolve(__dirname, '../../dist/client/index.html');
-        const template = fs.readFileSync(templatePath, 'utf-8')
-        const html = template
-            .replace('<div id="app"></div>',
-            `<div id="app">${partial}</div>
-            <script>window.__INITIAL_STATE__=${JSON.stringify(initialState)};</script>
-            `)
-        res.send(html);
-    } catch (err) {
-        console.error(err)
-        res.status(500).send({'error':'服务器错误'})
-    }
-})
+app.get('/', async (req, res) => {
+    const initialState = { todos };
+  
+    const app = createApp(initialState);
+    const partial = await renderToString(app);
+  
+    const template = fs.readFileSync(
+      path.resolve(__dirname, '../../dist/index.html'),
+      'utf-8',
+    );  
+    const html = template.replace(
+      '<div id="app"></div>',
+      `<div id="app">${partial}</div><script>window. __INITIAL_STATE__ =${JSON.stringify(initialState)}</script>`,
+    );  
+    res.send(html);
+});
+ 
 // 查
 app.get('/list',(req,res) => {
     res.json(todos)

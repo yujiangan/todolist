@@ -6,33 +6,8 @@ export interface TodoItem {
     text: string;
     completed: boolean;
 }
-// 创建 Axios 实例
-const currentOrigin = typeof window !== 'undefined' 
-  ? window.location.origin 
-  : 'http://localhost:3000';
-
-// 定义类型接口，添加索引签名
-interface OriginMap {
-  [key: string]: string
-}
-
-const originToBackend: OriginMap = {
-  // 本地前端 → 本地后端
-  'http://localhost:3000': 'http://localhost:3000', 
-
-  // GitHub Pages前端 → Vercel生产后端
-  'https://yujiangan.github.io': 'https://todolist-git-dev-yujiangans-projects.vercel.app/', 
-
-  // Vercel预览前端 → 同域后端（用相对路径，自动匹配当前域名）
-  'https://todolist-git-dev-yujiangans-projects.vercel.app': '/', 
-
-  // Vercel生产前端 → 同域后端（用相对路径）
-  'https://todolist-orpin-pi.vercel.app': '/' 
-};
-
-const baseURL = originToBackend[currentOrigin] || 'https://todolist-git-dev-yujiangans-projects.vercel.app'
 const apiClient = axios.create({
-  baseURL: baseURL,
+  baseURL: 'http://localhost:3000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

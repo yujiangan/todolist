@@ -16,6 +16,7 @@ export default defineConfig({
   },
   build: {
     ssr: true,
+    emptyOutDir: true,
     rollupOptions: {
       external: ['express', 'cors']
     }
